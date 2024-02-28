@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatroom</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+        socket.on('connect', () => {
+            document.querySelector('button').onclick = () => {
+                const message = document.querySelector('#myMessage').value;
+                socket.emit('message', message); // Use 'emit' with 'message' event
+                document.querySelector('#myMessage').value = ''; // Clear input field after sending
+            };
+        });
+        socket.on('message', data => {
+            const p = document.createElement('p');
+            const messageText = document.createTextNode(data); // Text node for message
+            p.appendChild(messageText);
+            document.querySelector('#messages').append(p);
+        });
+    });
+</script>
+
+</head>
+<body>
+    <<!-- Include the header and container divs -->
+<div class="chat-container">
+    <div class="header">
+        <h2>Chatroom - Welcome, {{ username }}</h2>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="input-group">
+        <input id="myMessage" type="text" placeholder="Type your message here...">
+        <button>Send</button>
+    </div>
+</div>
+
+</body>
+</html>
